@@ -1,7 +1,13 @@
 var userFormEl = document.querySelector("#user-form");
 var cityInputEl = document.querySelector("#city");
-// var recentSearchContainerEl = document.querySelector("#recent-search-container");
 var searchTermEl = document.querySelector("#city-search-term");
+var apiTempEl = document.querySelector("#apiTemp");
+var apiHumidityEl = document.querySelector("#apiHumidity");
+var apiWindEl = document.querySelector("#apiWind");
+var apiUVEl = document.querySelector("#apiUV");
+var recentSearchContainerEl = document.querySelector("#recent-search-container");
+
+
 
 var formSubmitHandler = function(event) {
     // prevent page from refreshing
@@ -14,7 +20,8 @@ var formSubmitHandler = function(event) {
     // if truthy, run getCity and clear input field, otherwise alert user
     if (cityInput) {
         getCity(cityInput);
-
+        addCitySearchHistory(cityInput);
+        
         // clear old content
         searchTermEl.textContent = "";
     } else {
@@ -56,11 +63,25 @@ var displayCity = function (city, searchTerm) {
         searchTermEl.textContent = "City not found.";
         return;
     }
-    // clear old content
-    
+    // populate today
 
+    // populate forecasts
+
+    // add city to search history
 }
+
+var addCitySearchHistory = function(city) {
+    // create a container for each city
+    var cityEl = document.createElement("button");
+    cityEl.classList = "btn btn-light list-item flex-row justify-space-between align-center";
+    cityEl.textContent = city;
+    console.log(cityEl);
+
+    // append to container
+    recentSearchContainerEl.appendChild(cityEl);
+};
 
 
 userFormEl.addEventListener("submit", formSubmitHandler);
+recentSearchContainerEl.addEventListener("submit", formSubmitHandler);
 
