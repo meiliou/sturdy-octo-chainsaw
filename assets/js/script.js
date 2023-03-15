@@ -56,6 +56,9 @@ var displayCity = function (city, searchTerm) {
         searchTermEl.textContent = "City not found.";
         return;
     }
+    // clear old content
+    
+
 }
 
 
