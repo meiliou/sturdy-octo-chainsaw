@@ -25,12 +25,12 @@
                 <div class="col-sm-3 pl-0">
                     <div class="card" style="width: 18rem;">
                         <form id="user-form" class="card-body">
-                            <label class="form-label" for="city">Search for a city</label> <br>
+                            <label class="form-label" for="city">Search: City, Country Code</label> <br>
                             <input name="city" id="city" type="text" autofocus="true" class="form-input"/>
                             <button type="submit" class="oi oi-magnifying-glass btn"></button>
                         </form>
                         <div class="card-body">
-                            <p class="subtitle">recent searches<span id="recent-searches"></span></p>
+                            <p class="subtitle">recent searches</p>
                             <div id="recent-search-container" class="list-group"></div>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                 <div class="col-sm-9">
                     <div class="row">
                         <div class="col-12 mb-3">
-                            <h2>City + Date + icon</h2>
+                            <h2><span id="city-search-term">City</span> + Date + icon</h2>
                             <p>Temperature:</p>
                             <p>Humidity:</p>
                             <p>Wind speed:</p>
