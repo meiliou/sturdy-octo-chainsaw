@@ -29,6 +29,8 @@ var formSubmitHandler = function(event) {
         // clear old content
         searchTermEl.textContent = "";
         cityInputEl.textContent = "";
+        // question: how to clear input in form, come back and debug
+        console.log(cityInputEl);
 
     } else {
         alert("Please enter a city");
@@ -52,7 +54,7 @@ var getWeather = function(city) {
                 console.log(response);
                 response.json().then(function(data) {
                     console.log(data);
-                    displayWeatherToday(data, city);
+                    displayWeatherToday(data);
                 });
             } else {
                 alert(`Error: ${response.statusText}`);
@@ -64,20 +66,21 @@ var getWeather = function(city) {
         });
 };
 
-var displayWeatherToday = function (city, searchTerm) {
+var displayWeatherToday = function (city) {
     // check if api returned any cities
     if (city.length===0) {
         searchTermEl.textContent = "City not found.";
         return;
     }
     // populate today
-    searchTermEl.textContent=(city.name + city.country);
-    dateEl.textContent=(moment().format("DD MMM YYYY"));
+    console.log(city);
+    searchTermEl.textContent=(city.name +", " + city.sys.country);
+    dateEl.textContent=(moment().format("DD/MM/YY"));
     apiTempEl.textContent=("Temperature: " + city.main.temp + "°C");
     apiHumidityEl.textContent=("Humidity: " + city.main.humidity);
     apiWindEl.textContent=("Wind Speed: " + city.wind.speed + "KPH");
     // UV levels don't seem to be available in openWeather api
-    // apiUVEl.textContent=("UV: " + city.weather.main);
+    // apiUVEl.textContent=("UV: " + weather.weather.main);
 };
 
 var getWeatherForecast = function(city) {
@@ -85,8 +88,7 @@ var getWeatherForecast = function(city) {
     //format the Geocoding api url
     var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" 
         + city.replace(" ","%20") 
-        + "&limit=5&appid="
-        + myApiKey
+        + "&limit=5&appid=" + myApiKey
         + "&units=metric"; 
     console.log(geoApiUrl);
 
@@ -96,66 +98,60 @@ var getWeatherForecast = function(city) {
             if (response.ok) {
                 console.log(response);
                 response.json().then(function(data) {
-                    console.log(data);
                     lat = data[0].lat;
                     lon = data[0].lon;
                     var name = data[0].name;
                     var country = data[0].country;
                     console.log(lat+name+country+lon);
+
+                    // format the forecast api url
+                    var apiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" 
+                        + lat 
+                        + "&lon=" + lon
+                        + "&appid=" + myApiKey
+                        + "&units=metric"; 
+                    console.log(apiUrl);
+
+                    fetch(apiUrl)
+                        .then(function(response) {
+                            if (response.ok) {
+                                console.log(response);
+                                response.json().then(function(data) {
+                                    console.log(data);
+                                    displayWeatherForecast(data);
+                                });
+                            } else {
+                                alert(`Error: ${response.statusText}`);
+                            }
+                        })
+                        .catch(function(error) {
+                            // Notice this `.catch()` getting chained onto the end of the `.then()` method
+                            alert("Unable to connect to OpenWeather");
+                        });
                 });
-            } else {
-                alert(`Error: ${response.statusText}`);
             }
         })
         .catch(function(error) {
             // Notice this `.catch()` getting chained onto the end of the `.then()` method
             alert("Unable to connect to OpenWeather");
-        });
-};
-
-var passToApi = function(lat,lon) {
-    var apiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" 
-        + lat 
-        + "&lon="
-        + lon
-        + "&appid="
-        + myApiKey
-        + "&units=metric"; 
-    console.log(apiUrl);
-
-    // make a request to the url
-    fetch(apiUrl)
-        .then(function(response) {
-            if (response.ok) {
-                console.log(response);
-                response.json().then(function(data) {
-                    console.log(data);
-                    // displayWeatherForecast(data, city);
-                });
-            } else {
-                alert(`Error: ${response.statusText}`);
-            }
         })
-        .catch(function(error) {
-            // Notice this `.catch()` getting chained onto the end of the `.then()` method
-            alert("Unable to connect to OpenWeather Forecasts");
-        });
 };
 
-// var displayWeatherForecast = function(lat,lon) {
-//     // check if api returned any cities
-//     if (city.length===0) {
-//         searchTermEl.textContent = "City not found.";
-//         return;
-//     }
-//     // populate today
-//     searchTermEl.textContent=(city.name + city.country);
-//     dateEl.textContent=(moment().format("DD MMM YYYY"));
-//     apiTempEl.textContent=("Temperature: " + city.main.temp + "°C");
-//     apiHumidityEl.textContent=("Humidity: " + city.main.humidity);
-//     apiWindEl.textContent=("Wind Speed: " + city.wind.speed + "KPH");
+var displayWeatherForecast = function(city) {
+    // check if api returned any cities
+    if (city.length===0) {
+        searchTermEl.textContent = "City not found.";
+        return;
+    }
+    // populate Forecast
+    console.log(city);
+    // searchTermEl.textContent=(city.name + city.country);
+    // dateEl.textContent=(moment().format("DD MMM YYYY"));
+    // apiTempEl.textContent=("Temperature: " + city.main.temp + "°C");
+    // apiHumidityEl.textContent=("Humidity: " + city.main.humidity);
+    // apiWindEl.textContent=("Wind Speed: " + city.wind.speed + "KPH");
 
-// };
+};
 
 
 
