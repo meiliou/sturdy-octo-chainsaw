@@ -81,7 +81,7 @@ var displayWeatherToday = function (city) {
     apiHumidityEl.textContent=("Humidity: " + city.main.humidity);
     apiWindEl.textContent=("Wind Speed: " + city.wind.speed + "KPH");
     var iconCode = city.weather[0].icon;
-    var iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png"
+    var iconUrl = "https://openweathermap.org/img/w/" + iconCode + ".png"
     $('#icon').attr('src',iconUrl);
     // UV levels don't seem to be available for FREE subscription under openWeather api
     // apiUVEl.textContent=("UV: " + weather.weather.main);
@@ -90,7 +90,7 @@ var displayWeatherToday = function (city) {
 var getWeatherForecast = function(city) {
     // using Geocoding api to convert city into longitude/latitude 
     //format the Geocoding api url
-    var geoApiUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" 
+    var geoApiUrl = "https://api.openweathermap.org/geo/1.0/direct?q=" 
         + city.replace(" ","%20") 
         + "&limit=5&appid=" + myApiKey
         + "&units=metric"; 
@@ -109,7 +109,7 @@ var getWeatherForecast = function(city) {
                     console.log(lat+name+country+lon);
 
                     // format the forecast api url
-                    var apiUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" 
+                    var apiUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" 
                         + lat 
                         + "&lon=" + lon
                         + "&appid=" + myApiKey
@@ -165,7 +165,7 @@ var displayWeatherForecast = function(city) {
     console.log(city);
     for (var i = firstNoonIndex; i < city.list.length; i += 8) {
         var iconCode = city.list[i].weather[0].icon;
-        var iconUrl = "http://openweathermap.org/img/w/" + iconCode + ".png";
+        var iconUrl = "https://openweathermap.org/img/w/" + iconCode + ".png";
         var temp = Math.round(city.list[i].main.temp*10)/10 + "°C";
         var humidity = city.list[i].main.humidity;
         var $cardRows = $('#cardRows');
