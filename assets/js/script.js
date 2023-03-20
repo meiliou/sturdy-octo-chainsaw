@@ -30,8 +30,7 @@ var formSubmitHandler = function(event) {
         
         // clear old content
         searchTermEl.textContent = "";
-        cityInputEl.textContent = "";
-        // question: how to clear input in form, come back and debug
+        cityInputEl.value = "";  // set value to empty string
         console.log(cityInputEl);
 
     } else {
@@ -143,6 +142,10 @@ var getWeatherForecast = function(city) {
 };
 
 var displayWeatherForecast = function(city) {
+    // clear old forecast cards
+    $("#cardRows").empty();
+    
+    
     // check if api returned any cities
     if (city.length===0) {
         searchTermEl.textContent = "City not found.";
@@ -170,7 +173,7 @@ var displayWeatherForecast = function(city) {
         // Create a new div with class and card structure
         var $card = $('<div class="col-sm-3 col-lg-3 mb-2">' +
                         '<div class="card">' +
-                            '<h5 class="card-header">' + city.list[i].dt_txt + '</h5>' +
+                            '<h5 class="card-header">' + city.list[i].dt_txt.split(" ")[0] + '</h5>' +
                             '<div class="card-body">' +
                                 '<img id="iconDay' + i + '" src="' + iconUrl + '" alt="">' +
                                 '<p id="tempDay' + i + '">Temperature: ' + temp + '</p>' +
@@ -186,17 +189,78 @@ var addCitySearchHistory = function(city) {
     // create a container for each city
     var cityEl = document.createElement("a");
     cityEl.classList = "btn btn-light list-item flex-row justify-space-between align-center";
-    // currently set to a link, need to finalise 
-    cityEl.setAttribute("href", "https://api.openweathermap.org/data/2.5/weather?q=" 
-        + city.replace(" ","%20") 
-        + "&APPID="
-        + myApiKey);
     cityEl.textContent = city;
     console.log(cityEl);
 
+    // add event listener to cityEl
+    cityEl.addEventListener("click", function(event) {
+        event.preventDefault();
+        var city = $(this).text();
+        cityInputEl.value = city; // set the value of cityInputEl
+        
+        formSubmitHandler({
+            preventDefault: function() {},
+            target: { city: city }
+        });
+    });    
+
+    // get existing search history from local storage
+    var searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+    // check if the city is already in search history
+    var index = searchHistory.indexOf(city);
+    if (index !== -1) {
+        // remove the city from its current position
+        searchHistory.splice(index, 1);
+    }
+
+    // add the city to the end of search history
+    searchHistory.push(city);
+
+    // store the updated search history in local storage
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+
     // append to container
     recentSearchContainerEl.appendChild(cityEl);
+
+    // limit search history to 5 searches
+    var searchHistoryItems = recentSearchContainerEl.querySelectorAll("a");
+    if (searchHistoryItems.length > 5) {
+        recentSearchContainerEl.removeChild(searchHistoryItems[0]);
+    }    
+    
 };
+
+// get search history from local storage
+var searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+// create an `a` element for each search history item
+searchHistory.forEach(function(city) {
+    var cityEl = document.createElement("a");
+    cityEl.classList = "btn btn-light list-item flex-row justify-space-between align-center";
+    cityEl.textContent = city;
+    cityEl.addEventListener("click", function(event) {
+        event.preventDefault();
+        var city = $(this).text();
+        cityInputEl.value = city;
+        formSubmitHandler({
+            preventDefault: function() {},
+        target: {city: city }
+    });
+  });
+  recentSearchContainerEl.appendChild(cityEl);
+});
+
+// limit search history to 5 searches
+var searchHistoryItems = recentSearchContainerEl.querySelectorAll("a");
+    if (searchHistoryItems.length > 5) {
+    recentSearchContainerEl.removeChild(searchHistoryItems[0]);
+}
+
+
+
+
+
 
 
 userFormEl.addEventListener("submit", formSubmitHandler);
