@@ -1,7 +1,7 @@
 // API variables
 const myApiKey = "2ca732745c4860a1e30f12f65cec56c5";
-var lat = "";
-var lon = "";
+var lat = String;
+var lon = String;
 // input variables
 var userFormEl = document.querySelector("#user-form");
 var cityInputEl = document.querySelector("#city");
